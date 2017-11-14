@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <cstring>
 
+//Constructor
 Rectangle::Rectangle() {
 	const char * cmd = 
 		"ffmpeg              "
