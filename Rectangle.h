@@ -7,15 +7,15 @@
 
 typedef unsigned char byte;
 
-class FrameRenderer {
+class Rectangle {
 public:
-	FrameRenderer();
-	~FrameRenderer();
+	Rectangle();
+	~Rectangle();
 	void draw_rect(int x, int y, int w, int h, byte r, byte g, byte b);
 	void clear_frame();
 	void clamp(int * x, int * y);
-	void draw_frame(double t, byte r, byte g, byte b);
-	bool outside_frame(int * x, int * y);
+	void draw_frame(double t);
+	bool outside_frame(int * x, int * y) const;
 private:
 	FILE *pipe;
 	unsigned char frame[H][W][3];

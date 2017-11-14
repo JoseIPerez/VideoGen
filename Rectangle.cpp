@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <cstring>
 
-FrameRenderer::FrameRenderer() {
+Rectangle::Rectangle() {
 	const char * cmd = 
 		"ffmpeg              "
 		"-y                  "
@@ -36,7 +36,7 @@ FrameRenderer::FrameRenderer() {
 	pipe = p;
 }
 
-FrameRenderer::~FrameRenderer() {
+Rectangle::~Rectangle() {
 	fflush(pipe);
 
 #ifdef _WIN32
@@ -47,20 +47,20 @@ FrameRenderer::~FrameRenderer() {
 }
 
 
-void FrameRenderer::clear_frame() { 
+void Rectangle::clear_frame() { 
 	memset(frame, 0, sizeof(frame)); 
 }
 
-void FrameRenderer::clamp(int * x, int * y) {
+void Rectangle::clamp(int * x, int * y) {
 	if (*x < 0) *x = 0; else if (*x >= W) *x = W - 1;
 	if (*y < 0) *y = 0; else if (*y >= H) *y = H - 1;
 }
 
-bool FrameRenderer::outside_frame(int * x, int * y) {
+bool Rectangle::outside_frame(int * x, int * y) const {
 	return *x < 0 || *x >= W || *y < 0 || *y >= H;
 }
 
-void FrameRenderer::draw_rect(int x, int y, int w, int h, byte r, byte g, byte b){
+void Rectangle::draw_rect(int x, int y, int w, int h, byte r, byte g, byte b){
 	if (outside_frame(&x, &y)) return;
 	int x0 = x;
 	int x1 = x + w;
@@ -75,13 +75,12 @@ void FrameRenderer::draw_rect(int x, int y, int w, int h, byte r, byte g, byte b
 			frame[y][x][2] = b;
 		}
 	}
-
 	fwrite(frame, 3, W * H, pipe);
 }
 
-void FrameRenderer::draw_frame(double t, byte r, byte g, byte b) {
+void Rectangle::draw_frame(double t) {
 	clear_frame();
 	const double pps = 80; // pixels per second
-	draw_rect(0 + t * pps, 0 + t * pps, 200, 100, r, g, b);
-	draw_rect(720 - t * pps, 480 - t * pps, 200, 100, r, g, b);
+	draw_rect(480, 0 + t * pps, 100, 20, 0xff, 0x00, 0x00);
+	draw_rect(0 + t * pps, 0 + t * pps, 20, 10, 0x00, 0xff, 0x00);
 }
